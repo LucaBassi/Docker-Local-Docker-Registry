@@ -1,0 +1,28 @@
+services:
+  registry:
+    image: registry:2
+    restart: always
+    ports:
+      - "443:443"
+    environment:
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry-Realm
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/registry.passwd
+      REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
+      REGISTRY_HTTP_ADDR: 0.0.0.0:443
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/docker-registry.crt
+      REGISTRY_HTTP_TLS_KEY: /certs/docker-registry.key
+    volumes:
+      - registrydata:/data
+      - /registry/auth:/auth
+      - /registry/certs:/certs
+    networks:
+      - mynet
+
+networks:
+  mynet:
+    driver: bridge
+
+volumes:
+  registrydata:
+    driver: local
